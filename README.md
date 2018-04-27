@@ -1,18 +1,16 @@
 FastLED + ESP8266 Web Server
 =========
 
-Control an addressable LED strip with an ESP8266 via a web browser or infrared remote control.
+Control an addressable LED strip with an NodeMCU (ESP8266) via a web browser or infrared remote control.
 
 Hardware
 --------
 
 ##### ESP8266 development board
 
-[![Wemos D1 Mini Pro & Headers](https://ae01.alicdn.com/kf/HTB1P1KVaMsSMeJjSsphq6xuJFXah/WEMOS-D1-mini-Pro-V1-1-0-16M-bytes-external-antenna-connector-ESP8266-WIFI-Internet-of.jpg_200x200.jpg)](https://www.aliexpress.com/item/WEMOS-D1-mini-Pro-16M-bytes-external-antenna-connector-ESP8266-WIFI-Internet-of-Things-development-board/32724692514.html)
+[![NodeMCU](https://cdn.shopify.com/s/files/1/0672/9409/products/NodeMCU_ESP8266_development_board_1024x1024.jpg)](https://cdn.shopify.com/s/files/1/0672/9409/products/NodeMCU_ESP8266_development_board_1024x1024.jpg)
 
-[Wemos D1 Mini Pro & Headers](https://www.aliexpress.com/item/WEMOS-D1-mini-Pro-16M-bytes-external-antenna-connector-ESP8266-WIFI-Internet-of-Things-development-board/32724692514.html)
 
-or
 
 [![Adafruit HUZZAH ESP8266 Breakout](https://cdn-shop.adafruit.com/310x233/2471-10.jpg)](https://www.adafruit.com/products/2471)
 
