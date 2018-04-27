@@ -1,4 +1,4 @@
-FastLED + ESP8266 Web Server
+FastLED + NodeMCU (ESP8266) Web Server
 =========
 
 Control an addressable LED strip with an NodeMCU (ESP8266) via a web browser or infrared remote control.
