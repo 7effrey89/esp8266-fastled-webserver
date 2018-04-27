@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+#define FASTLED_INTERRUPT_RETRY_COUNT 0 //nødvendig for at vise korrekt antal LEDS
+#define FASTLED_ESP8266_RAW_PIN_ORDER
 #include <FastLED.h>
 FASTLED_USING_NAMESPACE
 
@@ -24,7 +25,7 @@ extern "C" {
 }
 
 #include <ESP8266WiFi.h>
-//#include <ESP8266mDNS.h>
+#include <ESP8266mDNS.h>
 #include <ESP8266WebServer.h>
 #include <ESP8266HTTPUpdateServer.h>
 #include <WebSocketsServer.h>
@@ -52,12 +53,12 @@ ESP8266HTTPUpdateServer httpUpdateServer;
 
 #include "FSBrowser.h"
 
-#define DATA_PIN      D4
+#define DATA_PIN      D3
 #define LED_TYPE      WS2811
 #define COLOR_ORDER   GRB
-#define NUM_LEDS      24
+#define NUM_LEDS      60
 
-#define MILLI_AMPS         2000     // IMPORTANT: set the max milli-Amps of your power supply (4A = 4000mA)
+#define MILLI_AMPS         1000     // IMPORTANT: set the max milli-Amps of your power supply (4A = 4000mA)
 #define FRAMES_PER_SECOND  120 // here you can control the speed. With the Access Point / Web Server the animations run a bit slower.
 
 CRGB leds[NUM_LEDS];
@@ -203,6 +204,7 @@ const String paletteNames[paletteCount] = {
 #include "Fields.h"
 
 void setup() {
+  WiFi.setSleepMode(WIFI_NONE_SLEEP); //nødvendig for at vise korrekt antal LEDS
   Serial.begin(115200);
   delay(100);
   Serial.setDebugOutput(true);
@@ -246,7 +248,7 @@ void setup() {
   }
 
   //disabled due to https://github.com/jasoncoon/esp8266-fastled-webserver/issues/62
-  //initializeWiFi();
+  initializeWiFi();
 
   if (apMode)
   {
@@ -460,12 +462,11 @@ void broadcastString(String name, String value)
 void loop() {
   // Add entropy to random number generator; we use a lot of it.
   random16_add_entropy(random(65535));
-
   EVERY_N_SECONDS(10) {
     checkWiFi();
   }
 
-//  dnsServer.processNextRequest();
+  dnsServer.processNextRequest();
   webSocketsServer.loop();
   webServer.handleClient();
 
