@@ -56,7 +56,11 @@ ESP8266HTTPUpdateServer httpUpdateServer;
 #define DATA_PIN      D3
 #define LED_TYPE      WS2811
 #define COLOR_ORDER   GRB
-#define NUM_LEDS      60
+#define MatrixWidth   24 //matrix settings
+#define MatrixHeight  8 //matrix settings
+#define NUM_LEDS      MatrixWidth * MatrixHeight //matrix settings
+
+const bool MatrixSerpentineLayout = true; //matrix settings
 
 #define MILLI_AMPS         1000     // IMPORTANT: set the max milli-Amps of your power supply (4A = 4000mA)
 #define FRAMES_PER_SECOND  120 // here you can control the speed. With the Access Point / Web Server the animations run a bit slower.
@@ -109,6 +113,29 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 
 CRGB solidColor = CRGB::Blue;
 
+//Matrix settings method
+uint16_t XY( uint8_t x, uint8_t y) 
+{
+  uint16_t i;
+
+  if ( MatrixSerpentineLayout == false) {
+    i = (y * MatrixWidth) + x;
+  }
+
+  if ( MatrixSerpentineLayout == true) {
+    if ( x & 0x01) {
+      // Odd columns run backwards
+      uint8_t reverseY = (MatrixHeight - 1) - y;
+      i = (x * MatrixHeight) + reverseY;
+    } else {
+      // Even rows run forwards
+      i = (x * MatrixHeight) + y;
+    }
+  }
+
+  return i;
+}
+
 // scale the brightness of all pixels down
 void dimAll(byte value)
 {
@@ -117,23 +144,89 @@ void dimAll(byte value)
   }
 }
 
-typedef void (*Pattern)();
-typedef Pattern PatternList[];
+typedef void (*Pattern)(); //unik for LED stripe
+typedef Pattern PatternList[]; //unik for LED stripe
 typedef struct {
-  Pattern pattern;
+  Pattern pattern; //unik for LED stripe - har en anden type
   String name;
 } PatternAndName;
 typedef PatternAndName PatternAndNameList[];
 
+//Matrix settings skal måske erstatte det ovenover -dette kode står længere nede i matrix ekemplet
+//typedef struct {
+//  CRGBPalette16 palette;
+//  String name;
+//} PaletteAndName;
+//typedef PaletteAndName PaletteAndNameList[];
+
 #include "Twinkles.h"
 #include "TwinkleFOX.h"
-
+#include "Map.h" //Matrix Settings
+#include "Noise.h" //Matrix Settings
 // List of patterns to cycle through.  Each is defined as a separate function below.
 
 PatternAndNameList patterns = {
   { pride,                  "Pride" },
+  { pride2,                 "Pride 2" },
   { colorWaves,             "Color Waves" },
+  { colorWaves2,            "Color Waves 2" },
 
+  { cubeTest,       "Cube XYZ Test" },
+  
+  { cubeXPalette,   "Cube X Palette" },
+  { cubeYPalette,   "Cube Y Palette" },
+  { cubeZPalette,   "Cube Z Palette" },
+  
+  { cubeXYPalette,  "Cube XY Palette" },
+  { cubeXZPalette,  "Cube XZ Palette" },
+  { cubeYZPalette,  "Cube YZ Palette" },
+  { cubeXYZPalette, "Cube XYZ Palette" },
+
+  { cubeXGradientPalette,   "Cube X Gradient Palette" },
+  { cubeYGradientPalette,   "Cube Y Gradient Palette" },
+  { cubeZGradientPalette,   "Cube Z Gradient Palette" },
+  
+  { cubeXYGradientPalette,  "Cube XY Gradient Palette" },
+  { cubeXZGradientPalette,  "Cube XZ Gradient Palette" },
+  { cubeYZGradientPalette,  "Cube YZ Gradient Palette" },
+  { cubeXYZGradientPalette, "Cube XYZ Gradient Palette" },
+
+  // 3d noise patterns
+  { fireNoise3d, "Fire Noise 3D" },
+  { fireNoise23d, "Fire Noise 2 3D" },
+  { lavaNoise3d, "Lava Noise 3D" },
+  { rainbowNoise3d, "Rainbow Noise 3D" },
+  { rainbowStripeNoise3d, "Rainbow Stripe Noise 3D" },
+  { partyNoise3d, "Party Noise 3D" },
+  { forestNoise3d, "Forest Noise 3D" },
+  { cloudNoise3d, "Cloud Noise 3D" },
+  { oceanNoise3d, "Ocean Noise 3D" },
+  { blackAndWhiteNoise3d, "Black & White Noise 3D" },
+  { blackAndBlueNoise3d, "Black & Blue Noise 3D" },
+  
+  { xyMatrixTest,           "Matrix Test" },
+
+  { verticalPalette,           "Vertical Palette" },
+  { diagonalPalette,           "Diagonal Palette" },
+  { horizontalPalette,         "Horizontal Palette" },
+
+  { verticalGradientPalette,   "Vertical Gradient Palette" },
+  { diagonalGradientPalette,   "Diagonal Gradient Palette" },
+  { horizontalGradientPalette, "Horizontal Gradient Palette" },
+
+  // noise patterns
+  { fireNoise, "Fire Noise" },
+  { fireNoise2, "Fire Noise 2" },
+  { lavaNoise, "Lava Noise" },
+  { rainbowNoise, "Rainbow Noise" },
+  { rainbowStripeNoise, "Rainbow Stripe Noise" },
+  { partyNoise, "Party Noise" },
+  { forestNoise, "Forest Noise" },
+  { cloudNoise, "Cloud Noise" },
+  { oceanNoise, "Ocean Noise" },
+  { blackAndWhiteNoise, "Black & White Noise" },
+  { blackAndBlueNoise, "Black & Blue Noise" },
+  
   // twinkle patterns
   { rainbowTwinkles,        "Rainbow Twinkles" },
   { snowTwinkles,           "Snow Twinkles" },
@@ -506,7 +599,7 @@ void loop() {
   FastLED.show();
 
   // insert a delay to keep the framerate modest
-  // FastLED.delay(1000 / FRAMES_PER_SECOND);
+  // FastLED.delay(1000 / FRAMES_PER_SECOND); <--Matrix Settings: i den er denne udkommenteret
 }
 
 void webSocketEvent(uint8_t num, WStype_t type, uint8_t * payload, size_t length) {
@@ -907,7 +1000,16 @@ void setPaletteName(String name)
     }
   }
 }
+//Matrix Settings 
+void setSpeed(uint8_t value)
+{
+  speed = value;
 
+  EEPROM.write(9, value);
+  EEPROM.commit();
+
+  broadcastInt("speed", speed);
+}
 void adjustBrightness(bool up)
 {
   if (up && brightnessIndex < brightnessCount - 1)
@@ -968,6 +1070,96 @@ void rainbow()
 {
   // FastLED's built-in rainbow generator
   fill_rainbow( leds, NUM_LEDS, gHue, 255 / NUM_LEDS);
+}
+
+void xyMatrixTest()
+{
+  FastLED.clear();
+
+  static uint8_t x = 0;
+  static uint8_t y = 0;
+
+  leds[XY(x, y)] = CHSV(gHue, 255, 255);
+
+  EVERY_N_MILLIS(30) {
+    x++;
+    if (x >= MatrixWidth) {
+      x = 0;
+      y++;
+      if (y >= MatrixHeight) {
+        y = 0;
+      }
+    }
+  }
+}
+void verticalPalette() {
+  uint8_t verticalHues = 256 / MatrixHeight;
+
+  for (uint8_t y = 0; y < MatrixHeight; y++) {
+    CRGB color = ColorFromPalette(palettes[currentPaletteIndex], beat8(speed) + (y * verticalHues));
+
+    for (uint8_t x = 0; x < MatrixWidth; x++) {
+      leds[XY(x, y)] = color;
+    }
+  }
+}
+
+void diagonalPalette() {
+  uint8_t verticalHues = 256 / MatrixHeight;
+
+  for (uint8_t y = 0; y < MatrixHeight; y++) {
+    for (uint8_t x = 0; x < MatrixWidth; x++) {
+      CRGB color = ColorFromPalette(palettes[currentPaletteIndex], beat8(speed) - ((x - y) * verticalHues));
+      leds[XY(x, y)] = color;
+    }
+  }
+}
+
+void horizontalPalette() {
+  uint8_t horizontalHues = 256 / MatrixWidth;
+
+  for (uint8_t x = 0; x < MatrixWidth; x++) {
+    CRGB color = ColorFromPalette(palettes[currentPaletteIndex], beat8(speed) - (x * horizontalHues));
+
+    for (uint8_t y = 0; y < MatrixHeight; y++) {
+      leds[XY(x, y)] = color;
+    }
+  }
+}
+
+void verticalGradientPalette() {
+  uint8_t verticalHues = 256 / MatrixHeight;
+
+  for (uint8_t y = 0; y < MatrixHeight; y++) {
+    CRGB color = ColorFromPalette(gCurrentPalette, beat8(speed) + (y * verticalHues));
+
+    for (uint8_t x = 0; x < MatrixWidth; x++) {
+      leds[XY(x, y)] = color;
+    }
+  }
+}
+
+void diagonalGradientPalette() {
+  uint8_t verticalHues = 256 / MatrixHeight;
+
+  for (uint8_t y = 0; y < MatrixHeight; y++) {
+    for (uint8_t x = 0; x < MatrixWidth; x++) {
+      CRGB color = ColorFromPalette(gCurrentPalette, beat8(speed) - ((x - y) * verticalHues));
+      leds[XY(x, y)] = color;
+    }
+  }
+}
+
+void horizontalGradientPalette() {
+  uint8_t horizontalHues = 256 / MatrixWidth;
+
+  for (uint8_t x = 0; x < MatrixWidth; x++) {
+    CRGB color = ColorFromPalette(gCurrentPalette, beat8(speed) - (x * horizontalHues));
+
+    for (uint8_t y = 0; y < MatrixHeight; y++) {
+      leds[XY(x, y)] = color;
+    }
+  }
 }
 
 void rainbowWithGlitter()
@@ -1101,6 +1293,46 @@ void pride()
     pixelnumber = (NUM_LEDS - 1) - pixelnumber;
 
     nblend( leds[pixelnumber], newcolor, 64);
+  }
+}
+
+void pride2()
+{
+  static uint16_t sPseudotime = 0;
+  static uint16_t sLastMillis = 0;
+  static uint16_t sHue16 = 0;
+
+  uint8_t sat8 = beatsin88( 87, 220, 250);
+  uint8_t brightdepth = beatsin88( 341, 96, 224);
+  uint16_t brightnessthetainc16 = beatsin88( 203, (25 * 256), (40 * 256));
+  uint8_t msmultiplier = beatsin88(147, 23, 60);
+
+  uint16_t hue16 = sHue16;//gHue * 256;
+  uint16_t hueinc16 = beatsin88(113, 1, 3000);
+
+  uint16_t ms = millis();
+  uint16_t deltams = ms - sLastMillis ;
+  sLastMillis  = ms;
+  sPseudotime += deltams * msmultiplier;
+  sHue16 += deltams * beatsin88( 400, 5, 9);
+  uint16_t brightnesstheta16 = sPseudotime;
+
+  for (uint8_t x = 0; x < MatrixWidth; x++) {
+    hue16 += hueinc16;
+    uint8_t hue8 = hue16 / 256;
+
+    brightnesstheta16  += brightnessthetainc16;
+    uint16_t b16 = sin16( brightnesstheta16  ) + 32768;
+
+    uint16_t bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
+    uint8_t bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
+    bri8 += (255 - brightdepth);
+
+    CRGB newcolor = CHSV( hue8, sat8, bri8);
+
+    for (uint8_t y = 0; y < MatrixHeight; y++) {
+      nblend(leds[XY(x, y)], newcolor, 64);
+    }
   }
 }
 
@@ -1240,6 +1472,56 @@ void colorwaves( CRGB* ledarray, uint16_t numleds, CRGBPalette16& palette)
     pixelnumber = (numleds - 1) - pixelnumber;
 
     nblend( ledarray[pixelnumber], newcolor, 128);
+  }
+}
+
+void colorWaves2()
+{
+  static uint16_t sPseudotime = 0;
+  static uint16_t sLastMillis = 0;
+  static uint16_t sHue16 = 0;
+
+  // uint8_t sat8 = beatsin88( 87, 220, 250);
+  uint8_t brightdepth = beatsin88( 341, 96, 224);
+  uint16_t brightnessthetainc16 = beatsin88( 203, (25 * 256), (40 * 256));
+  uint8_t msmultiplier = beatsin88(147, 23, 60);
+
+  uint16_t hue16 = sHue16;//gHue * 256;
+  uint16_t hueinc16 = beatsin88(113, 300, 1500);
+
+  uint16_t ms = millis();
+  uint16_t deltams = ms - sLastMillis ;
+  sLastMillis  = ms;
+  sPseudotime += deltams * msmultiplier;
+  sHue16 += deltams * beatsin88( 400, 5, 9);
+  uint16_t brightnesstheta16 = sPseudotime;
+
+  for (uint8_t x = 0; x < MatrixWidth; x++) {
+    hue16 += hueinc16;
+    uint8_t hue8 = hue16 / 256;
+    uint16_t h16_128 = hue16 >> 7;
+    if ( h16_128 & 0x100) {
+      hue8 = 255 - (h16_128 >> 1);
+    } else {
+      hue8 = h16_128 >> 1;
+    }
+
+    brightnesstheta16  += brightnessthetainc16;
+    uint16_t b16 = sin16( brightnesstheta16  ) + 32768;
+
+    uint16_t bri16 = (uint32_t)((uint32_t)b16 * (uint32_t)b16) / 65536;
+    uint8_t bri8 = (uint32_t)(((uint32_t)bri16) * brightdepth) / 65536;
+    bri8 += (255 - brightdepth);
+
+    uint8_t index = hue8;
+    //index = triwave8( index);
+    index = scale8( index, 240);
+
+    CRGB newcolor = ColorFromPalette(gCurrentPalette, index, bri8);
+
+    for (uint8_t y = 0; y < MatrixHeight; y++) {
+      nblend(leds[XY(x, y)], newcolor, 128);
+    }
   }
 }
 
