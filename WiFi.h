@@ -1,8 +1,8 @@
-//#include <DNSServer.h>
+#include <DNSServer.h>
 
-//DNSServer dnsServer;
+DNSServer dnsServer;
 
-//const byte DNS_PORT = 53;
+const byte DNS_PORT = 53;
 
 // bool apMode = false;
 
@@ -13,7 +13,7 @@ const char WiFiAPPSK[] = "";
 char* ssid = "";
 char* password = "";
 
-#define HOSTNAME "ESP8266-" ///< Hostname. The initializeWiFi function adds the Chip ID at the end.
+#define HOSTNAME "Treelight" ///< Hostname. The initializeWiFi function adds the Chip ID at the end.
 
 #define DEBUG_WIFI 1
 
@@ -60,8 +60,8 @@ void startAp() {
   debugPrintln("AP IP address: ");
   debugPrintln(WiFi.softAPIP());
 
-  //  dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
-  //  dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
+    dnsServer.setErrorReplyCode(DNSReplyCode::NoError);
+    dnsServer.start(DNS_PORT, "*", WiFi.softAPIP());
 }
 
 String getWiFiJson() {
@@ -97,8 +97,11 @@ void initializeWiFi() {
   WiFi.mode(WIFI_AP_STA);
 
   // Set Hostname.
-  String hostname = String(HOSTNAME);
+  String hostname = String(HOSTNAME); 
+  /**
+   * default settings
   hostname += String(ESP.getChipId(), HEX);
+  */
   WiFi.hostname(hostname);
 
   // Print hostname.
@@ -110,10 +113,10 @@ void initializeWiFi() {
   for (uint8_t i = 0; i < hostname.length(); i++)
     hostnameChar[i] = hostname.charAt(i);
 
-  //  MDNS.begin(hostnameChar);
+    MDNS.begin(hostnameChar);
 
   // Add service to MDNS-SD
-  //  MDNS.addService("http", "tcp", 80);
+    MDNS.addService("http", "tcp", 80);
 
   // attempt to connect; should it fail, fall back to AP mode
   //  WiFi.mode(WIFI_STA);
