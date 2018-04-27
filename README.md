@@ -6,15 +6,10 @@ Control an addressable LED strip with an NodeMCU (ESP8266) via a web browser or 
 Hardware
 --------
 
-##### ESP8266 development board
+##### NodeMCU development board
 
-[![NodeMCU](https://cdn.shopify.com/s/files/1/0672/9409/products/NodeMCU_ESP8266_development_board_1024x1024.jpg)](https://cdn.shopify.com/s/files/1/0672/9409/products/NodeMCU_ESP8266_development_board_1024x1024.jpg)
+<img src="https://cdn.shopify.com/s/files/1/0672/9409/products/NodeMCU_ESP8266_development_board_1024x1024.jpg" width="250">
 
-
-
-[![Adafruit HUZZAH ESP8266 Breakout](https://cdn-shop.adafruit.com/310x233/2471-10.jpg)](https://www.adafruit.com/products/2471)
-
-[Adafruit HUZZAH ESP8266 Breakout](https://www.adafruit.com/products/2471)
 
 ##### Addressable LED strip
 
