@@ -144,6 +144,36 @@ void dimAll(byte value)
   }
 }
 
+typedef struct {
+  CRGBPalette16 palette;
+   String name;
+ } PaletteAndName;
+typedef PaletteAndName PaletteAndNameList[];
+
+const CRGBPalette16 palettes[] = {
+  RainbowColors_p,
+  RainbowStripeColors_p,
+  CloudColors_p,
+  LavaColors_p,
+  OceanColors_p,
+  ForestColors_p,
+  PartyColors_p,
+  HeatColors_p
+};
+
+const uint8_t paletteCount = ARRAY_SIZE(palettes);
+
+const String paletteNames[paletteCount] = {
+  "Rainbow",
+  "Rainbow Stripe",
+  "Cloud",
+  "Lava",
+  "Ocean",
+   "Forest",
+  "Party",
+   "Heat",
+};
+ 
 typedef void (*Pattern)(); //unik for LED stripe
 typedef Pattern PatternList[]; //unik for LED stripe
 typedef struct {
@@ -151,13 +181,6 @@ typedef struct {
   String name;
 } PatternAndName;
 typedef PatternAndName PatternAndNameList[];
-
-//Matrix settings skal måske erstatte det ovenover -dette kode står længere nede i matrix ekemplet
-//typedef struct {
-//  CRGBPalette16 palette;
-//  String name;
-//} PaletteAndName;
-//typedef PaletteAndName PaletteAndNameList[];
 
 #include "Twinkles.h"
 #include "TwinkleFOX.h"
@@ -263,36 +286,6 @@ PatternAndNameList patterns = {
 };
 
 const uint8_t patternCount = ARRAY_SIZE(patterns);
-
-typedef struct {
-  CRGBPalette16 palette;
-   String name;
- } PaletteAndName;
-typedef PaletteAndName PaletteAndNameList[];
-
-const CRGBPalette16 palettes[] = {
-  RainbowColors_p,
-  RainbowStripeColors_p,
-  CloudColors_p,
-  LavaColors_p,
-  OceanColors_p,
-  ForestColors_p,
-  PartyColors_p,
-  HeatColors_p
-};
-
-const uint8_t paletteCount = ARRAY_SIZE(palettes);
-
-const String paletteNames[paletteCount] = {
-  "Rainbow",
-  "Rainbow Stripe",
-  "Cloud",
-  "Lava",
-  "Ocean",
-   "Forest",
-  "Party",
-   "Heat",
- };
 
 #include "Fields.h"
 

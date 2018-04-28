@@ -10,8 +10,8 @@ const byte DNS_PORT = 53;
 const char WiFiAPPSK[] = "";
 
 // Wi-Fi network to connect to (if not in AP mode)
-char* ssid = "";
-char* password = "";
+const char* ssid = "";
+const char* password = "";
 
 #define HOSTNAME "Treelight" ///< Hostname. The initializeWiFi function adds the Chip ID at the end.
 
