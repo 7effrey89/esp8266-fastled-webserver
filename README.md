@@ -92,3 +92,10 @@ Control via infrared remote control is also supported, via the [ESP8266 port of 
 
 [Adafruit NeoPixel Ring]:https://www.adafruit.com/product/1586
 [Adafruit HUZZAH ESP8266 Breakout]:https://www.adafruit.com/products/2471
+
+Arduino IDE setup
+-----------------
+Installing the NodeMCU (Esp8266):
+https://learn.sparkfun.com/tutorials/esp8266-thing-hookup-guide/installing-the-esp8266-arduino-addon
+
+http://arduino.esp8266.com/stable/package_esp8266com_index.json
