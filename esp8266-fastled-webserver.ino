@@ -42,20 +42,22 @@ extern "C" {
 // True = Access point mode (direct connection to ESP8266)
 // False = Station mode (connects to existing network)
 // IPAddress = 192.168.4.1
-const bool apMode = true;
+const bool apMode = false;
 
-//#define SERIAL_OUTPUT			// Uncomment to enable serial output. Useful for debugging
+#define SERIAL_OUTPUT			// Uncomment to enable serial output. Useful for debugging
 
 ESP8266WebServer webServer(80);
 WebSocketsServer webSocketsServer = WebSocketsServer(81);
 ESP8266HTTPUpdateServer httpUpdateServer;
 
+//#include "WiFi.h"
+
 // AP mode password
 const char WiFiAPPSK[] = "";
 
 // Wi-Fi network to connect to (if not in AP mode)
-const char* ssid = "";
-const char* password = "";
+const char* ssid = "7effrey24";
+const char* password = "wollabilla123";
 bool enableWiFi = true;
 
 #include "FSBrowser.h"
@@ -174,7 +176,7 @@ int XY(int x, int y, bool wrap = false) {	// x = Width, y = Height
 // For best battery life MILLI_AMPS = NUM_LEDS * 3 (gives poor white) Better white MILLI_AMPS = NUM_LEDS * 9 (poor battery life)
 #define MILLI_AMPS         NUM_LEDS * 3	// IMPORTANT: set the max MILLI_AMPS no greater than your power supply (1A = 1000mA)
 #define VOLTAGE		   4.2		//Set voltage used 4.2v for Lipo or 5v for 5V power supply or USB battery bank
-#define WIFI_MAX_POWER     1		//Set wifi output power between 0 and 20.5db (default around 19db)
+#define WIFI_MAX_POWER     19		//Set wifi output power between 0 and 20.5db (default around 19db)
 
 #if MATRIX_HEIGHT >= 3 && MATRIX_WIDTH >= 4 //originally: MATRIX_HEIGHT >= 4 && MATRIX_WIDTH >= 4
 #define MATRIX_2D
@@ -364,9 +366,9 @@ PatternAndNameList patterns = {
 const uint8_t patternCount = ARRAY_SIZE(patterns);
 
 #include "Fields.h"
-#include "Buttons.h"
 
 void setup() {
+  
 	delay(2000);
 	#ifdef SERIAL_OUTPUT
 	Serial.begin(115200);
@@ -437,8 +439,6 @@ void setup() {
 
 	setupWebserver();
 
-	setupButtons();
-
 	autoPlayTimeout = millis() + (autoplayDuration * 1000);
 
 	// Initialize noise coordinates to some random values
@@ -449,7 +449,7 @@ void setup() {
 
 void setWiFi()
 {
-	if (enableWiFi) {
+	if (enableWiFi == false) {
 		disableWiFi();
 	} else {
 		setupWiFi();
@@ -508,9 +508,9 @@ void setupWiFi()
 				String(mac[WL_MAC_ADDR_LENGTH - 1], HEX);
 		macID.toUpperCase();
 		#ifdef DEVICE_NAME
-		String AP_NameString = DEVICE_NAME" " + macID;
+		  String AP_NameString = DEVICE_NAME" " + macID;
 		#else
-		String AP_NameString = "ESP8266 Thing " + macID;
+		  String AP_NameString = "ESP8266 Thing " + macID;
 		#endif
 
 		char AP_NameChar[AP_NameString.length() + 1];
@@ -522,22 +522,22 @@ void setupWiFi()
 		WiFi.softAP(AP_NameChar, WiFiAPPSK);
 
 		#ifdef SERIAL_OUTPUT
-		Serial.printf("Connect to Wi-Fi access point: %s\n", AP_NameChar);
-		Serial.println("and open http://192.168.4.1 in your browser");
+		  Serial.printf("Connect to Wi-Fi access point: %s\n", AP_NameChar);
+		  Serial.println("and open http://192.168.4.1 in your browser");
 		#endif
-  	} else {
-		WiFi.mode(WIFI_STA);
-		#ifdef SERIAL_OUTPUT
-		Serial.printf("Connecting to %s\n", ssid);
-		#endif
+	} else {
+	  WiFi.mode(WIFI_STA);
+    #ifdef SERIAL_OUTPUT
+      Serial.printf("Connecting to %s\n", ssid);
+    #endif
 		if (String(WiFi.SSID()) != String(ssid)) {
 			WiFi.begin(ssid, password);
 		}
 
 		while (WiFi.status() != WL_CONNECTED) {
 			delay(500);
-		#ifdef SERIAL_OUTPUT
-			Serial.print(".");
+		  #ifdef SERIAL_OUTPUT
+			  Serial.print(".");
 		}
 
 		Serial.print("Connected! Open http://");
@@ -753,11 +753,6 @@ void loop() {
 //	dnsServer.processNextRequest();
 	webSocketsServer.loop();
 	webServer.handleClient();
-
-	// Read Buttons
-	EVERY_N_MILLISECONDS(BUTTON_CHECK_INTERVAL) {
-		readButtons();
-	}
 
 	// Only write to EEPROM every N minutes and only when data has been changed to prevent wear on the EEPROM
 	EVERY_N_MINUTES(5) {
