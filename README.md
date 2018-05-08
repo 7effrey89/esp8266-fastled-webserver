@@ -31,7 +31,7 @@ Optional shield to make everything more tidy:
 
 [Wemos D1 Mini ESP8266 LED & Level Shifter Shield](https://www.tindie.com/products/jasoncoon/wemos-d1-mini-esp8266-led-and-level-shifter-shield)
 
-LED Wiring
+LED Wiring (view structure in git-edit mode)
 --------
 None
 1   2   3   4
