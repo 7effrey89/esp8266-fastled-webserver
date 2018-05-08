@@ -31,6 +31,25 @@ Optional shield to make everything more tidy:
 
 [Wemos D1 Mini ESP8266 LED & Level Shifter Shield](https://www.tindie.com/products/jasoncoon/wemos-d1-mini-esp8266-led-and-level-shifter-shield)
 
+LED Wiring
+--------
+None
+1   2   3   4
+5   6   7   8
+9   10  11  12
+
+Serpentile
+4   5   9   13
+3   6   10  14
+2   7   11  15
+1   8   12  16
+
+Serpentile Horizontal
+1   2   3   4
+8   7   6   5 
+9   10  11  12
+16  15  14  13
+
 Features
 --------
 * Turn the NeoPixel Ring on and off
